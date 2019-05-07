@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
 const STATUS_INITIAL = 'initial';
 const STATUS_ASKING_PERMISSION = 'askingPermission';
 const STATUS_WAITING = 'waiting';
@@ -20,6 +19,13 @@ export type VoiceListeningState = {
   errorCode?: string;
 };
 
+export type VoiceSearchHelper = {
+  getState: () => VoiceListeningState;
+  isBrowserSupported: () => boolean;
+  isListening: () => boolean;
+  toggleListening: () => void;
+};
+
 export type ToggleListening = () => void;
 
 export default function voiceSearchHelper({
@@ -27,7 +33,7 @@ export default function voiceSearchHelper({
   language,
   onQueryChange,
   onStateChange,
-}: VoiceSearchHelperParams) {
+}: VoiceSearchHelperParams): VoiceSearchHelper {
   const SpeechRecognitionAPI: new () => SpeechRecognition =
     (window as any).webkitSpeechRecognition ||
     (window as any).SpeechRecognition;
@@ -40,25 +46,25 @@ export default function voiceSearchHelper({
   let state: VoiceListeningState = getDefaultState(STATUS_INITIAL);
   let recognition: SpeechRecognition | undefined;
 
-  const isBrowserSupported = () => Boolean(SpeechRecognitionAPI);
+  const isBrowserSupported = (): boolean => Boolean(SpeechRecognitionAPI);
 
-  const isListening = () =>
+  const isListening = (): boolean =>
     state.status === STATUS_ASKING_PERMISSION ||
     state.status === STATUS_WAITING ||
     state.status === STATUS_RECOGNIZING;
 
-  const setState = (newState = {}) => {
+  const setState = (newState = {}): void => {
     state = { ...state, ...newState };
     onStateChange();
   };
 
   const getState = (): VoiceListeningState => state;
 
-  const resetState = (status = STATUS_INITIAL) => {
+  const resetState = (status = STATUS_INITIAL): void => {
     setState(getDefaultState(status));
   };
 
-  const stop = () => {
+  const stop = (): void => {
     if (recognition) {
       recognition.stop();
       recognition = undefined;
@@ -66,7 +72,7 @@ export default function voiceSearchHelper({
     resetState();
   };
 
-  const start = () => {
+  const start = (): void => {
     recognition = new SpeechRecognitionAPI();
     if (!recognition) {
       return;
@@ -109,7 +115,7 @@ export default function voiceSearchHelper({
     recognition.start();
   };
 
-  const toggleListening = () => {
+  const toggleListening = (): void => {
     if (!isBrowserSupported()) {
       return;
     }

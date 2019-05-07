@@ -27,25 +27,28 @@ export type VoiceSearchConnectorParams = {
   }) => Partial<SearchParameters> | void;
 };
 
-export interface VoiceSearchRenderOptions<T> extends RenderOptions<T> {
+export interface VoiceSearchRenderOptions<TVoiceSearchWidgetParams>
+  extends RenderOptions<TVoiceSearchWidgetParams> {
   isBrowserSupported: boolean;
   isListening: boolean;
   toggleListening: ToggleListening;
   voiceListeningState: VoiceListeningState;
 }
 
-export type VoiceSearchRenderer<T> = Renderer<
-  VoiceSearchRenderOptions<VoiceSearchConnectorParams & T>
+export type VoiceSearchRenderer<TVoiceSearchWidgetParams> = Renderer<
+  VoiceSearchRenderOptions<
+    VoiceSearchConnectorParams & TVoiceSearchWidgetParams
+  >
 >;
 
-export type VoiceSearchWidgetFactory<T> = WidgetFactory<
-  VoiceSearchConnectorParams & T
+export type VoiceSearchWidgetFactory<TVoiceSearchWidgetParams> = WidgetFactory<
+  VoiceSearchConnectorParams & TVoiceSearchWidgetParams
 >;
 
-export type VoiceSearchConnector = <T>(
-  renderFn: VoiceSearchRenderer<T>,
+export type VoiceSearchConnector = <TVoiceSearchWidgetParams>(
+  renderFn: VoiceSearchRenderer<TVoiceSearchWidgetParams>,
   unmountFn?: () => void
-) => VoiceSearchWidgetFactory<T>;
+) => VoiceSearchWidgetFactory<TVoiceSearchWidgetParams>;
 
 const connectVoiceSearch: VoiceSearchConnector = (
   renderFn,
@@ -63,7 +66,7 @@ const connectVoiceSearch: VoiceSearchConnector = (
         toggleListening,
         getState,
       },
-    }) => {
+    }): void => {
       renderFn(
         {
           isBrowserSupported: isBrowserSupported(),
@@ -87,7 +90,7 @@ const connectVoiceSearch: VoiceSearchConnector = (
       init({ helper, instantSearchInstance }) {
         (this as any)._refine = (() => {
           let previousQuery: string | undefined;
-          const setQueryAndSearch = (query: string) => {
+          const setQueryAndSearch = (query: string): void => {
             if (query !== helper.state.query) {
               previousQuery = helper.state.query;
               if (typeof additionalQueryParameters === 'function') {

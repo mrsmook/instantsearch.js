@@ -1,8 +1,9 @@
-import voiceSearchHelper, { VoiceSearchHelperParams } from '..';
+import voiceSearchHelper, {
+  VoiceSearchHelper,
+  VoiceSearchHelperParams,
+} from '..';
 
-const getHelper = (
-  opts?: VoiceSearchHelperParams
-): ReturnType<typeof voiceSearchHelper> =>
+const getHelper = (opts?: VoiceSearchHelperParams): VoiceSearchHelper =>
   voiceSearchHelper(
     opts || {
       searchAsYouSpeak: false,
