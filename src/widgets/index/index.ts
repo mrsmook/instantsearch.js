@@ -19,7 +19,6 @@ import {
 import {
   createDocumentationMessageGenerator,
   resolveSearchParameters,
-  enhanceConfiguration,
   mergeSearchParameters,
 } from '../../lib/utils';
 
@@ -251,7 +250,17 @@ const index = (props: IndexProps): Index => {
           return next || state;
         }, helper!.state);
 
-        helper!.setState(localWidgets.reduce(enhanceConfiguration, nextState));
+        localUiState = getLocalWidgetsState(localWidgets, {
+          searchParameters: nextState,
+          helper: helper!,
+        });
+
+        helper!.setState(
+          getLocalWidgetsSearchParameters(localWidgets, {
+            uiState: localUiState,
+            initialSearchParameters: nextState,
+          })
+        );
 
         if (localWidgets.length) {
           localInstantSearchInstance.scheduleSearch();
