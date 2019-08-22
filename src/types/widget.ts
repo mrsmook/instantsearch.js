@@ -1,6 +1,7 @@
 import { Index } from '../widgets/index/index';
 import {
   AlgoliaSearchHelper as Helper,
+  PlainSearchParameters,
   SearchParameters,
   SearchResults,
 } from 'algoliasearch-helper';
@@ -50,6 +51,7 @@ export interface WidgetSearchParametersOptions {
 
 export type UiState = {
   query?: string;
+  configure?: PlainSearchParameters;
   refinementList?: {
     [attribute: string]: string[];
   };
